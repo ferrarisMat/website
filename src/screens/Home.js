@@ -5,13 +5,21 @@ import FPSStats from "react-fps-stats";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { Stars } from '@react-three/drei';
 import Glow from '../Glow';
+import earthImg from '../assets/img/earthmap1k.jpg';
+import moonImg from '../assets/img/moonmap1k.jpg';
 extend({ OrbitControls })
 const sunPivotPoint = new THREE.Object3D();
+const earthPivotPoint = new THREE.Object3D();
+const BASE_EARTH_SIZE = .2;
+const BASE_EARTH_REVOLUTION_SPEED = 0.001;
+const BASE_EARTH_ROTATION_SPEED = 0.01;
+const BASE_EARTH_DISTANCE = 5;
 function Sun(props) {
   const mesh = useRef();
 
   useFrame(() => {
     mesh.current.add(sunPivotPoint);
+    mesh.current.add(earthPivotPoint);
   })
 
   return (
@@ -30,6 +38,54 @@ function Sun(props) {
     </mesh>
   )
 }
+function Earth(props) {
+  const mesh = useRef();
+  const texture = useLoader(THREE.TextureLoader, earthImg);
+  
+  useFrame(() => {
+    sunPivotPoint.add(mesh.current)
+    mesh.current.add(earthPivotPoint);
+    mesh.current.rotation.y += BASE_EARTH_ROTATION_SPEED;
+    mesh.current.rotation.z = -23.5;
+    sunPivotPoint.rotation.y += BASE_EARTH_REVOLUTION_SPEED;
+  })
+
+  return (
+    <mesh
+      {...props}
+      ref={mesh}
+      scale={[1, 1, 1]}
+    >
+      <sphereGeometry attach="geometry" args={[BASE_EARTH_SIZE, 32, 32]} />
+      <meshPhongMaterial
+        specular="0xFF0000"
+        map={texture}
+      />
+    </mesh>
+  )
+}
+
+function Moon(props) {
+  const mesh = useRef();
+  const texture = useLoader(THREE.TextureLoader, moonImg);
+  useFrame(() => {
+    earthPivotPoint.add(mesh.current);
+    earthPivotPoint.rotation.y -= BASE_EARTH_REVOLUTION_SPEED * 2.74;
+  })
+
+  return (
+    <mesh
+      {...props}
+      ref={mesh}
+      scale={[1, 1, 1]}
+    >
+      <sphereGeometry attach="geometry" args={[BASE_EARTH_SIZE * 0.2724, 32, 32]} />
+      <meshPhongMaterial
+        map={texture}
+      />
+    </mesh>
+  )
+}
 const Scene = () => {
   const {
     camera,
@@ -40,6 +96,16 @@ const Scene = () => {
       <Suspense fallback={null}>
         <pointLight position={[0, 0, -2.5]} intensity={.5} color="white" />
         <Sun position={[0, 0, -2.5]} />
+        <group>
+          <Earth
+            position={[BASE_EARTH_DISTANCE, 0, 0]}
+            onClick={() => console.log("click")}
+          />
+          <Moon
+            position={[.4, 0, 0]}
+            rotation={[.5, 0, 0]}
+          />
+        </group>
         <Stars
           radius={200}
           depth={100}
@@ -63,4 +129,4 @@ export default function Home() {
       </Canvas>
     </>
   )
-}
+}}
