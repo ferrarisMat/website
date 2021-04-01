@@ -7,9 +7,11 @@ import { Stars } from '@react-three/drei';
 import Glow from '../Glow';
 import earthImg from '../assets/img/earthmap1k.jpg';
 import moonImg from '../assets/img/moonmap1k.jpg';
+import marsImg from '../assets/img/marsmap1k.jpg';
 extend({ OrbitControls })
 const sunPivotPoint = new THREE.Object3D();
 const earthPivotPoint = new THREE.Object3D();
+const marsPivotPoint = new THREE.Object3D();
 const BASE_EARTH_SIZE = .2;
 const BASE_EARTH_REVOLUTION_SPEED = 0.001;
 const BASE_EARTH_ROTATION_SPEED = 0.01;
@@ -20,6 +22,7 @@ function Sun(props) {
   useFrame(() => {
     mesh.current.add(sunPivotPoint);
     mesh.current.add(earthPivotPoint);
+    mesh.current.add(marsPivotPoint);
   })
 
   return (
@@ -86,6 +89,31 @@ function Moon(props) {
     </mesh>
   )
 }
+function Mars(props) {
+  const mesh = useRef();
+  const texture = useLoader(THREE.TextureLoader, marsImg);
+
+  useFrame(() => {
+    marsPivotPoint.add(mesh.current)
+    mesh.current.rotation.y += BASE_EARTH_ROTATION_SPEED * 1.1;
+    marsPivotPoint.rotation.y += (BASE_EARTH_REVOLUTION_SPEED / 188.07118412046543) * 100;
+    marsPivotPoint.position.x = 0.5;
+  })
+
+  return (
+    <mesh
+      {...props}
+      ref={mesh}
+      scale={[1, 1, 1]}
+    >
+      <sphereGeometry attach="geometry" args={[BASE_EARTH_SIZE * 0.532, 32, 32]} />
+      <meshPhongMaterial
+        specular="0xFF0000"
+        map={texture}
+      />
+    </mesh>
+  )
+}
 const Scene = () => {
   const {
     camera,
@@ -106,6 +134,7 @@ const Scene = () => {
             rotation={[.5, 0, 0]}
           />
         </group>
+        <Mars position={[BASE_EARTH_DISTANCE * 1.52, 0, 0]} />
         <Stars
           radius={200}
           depth={100}
