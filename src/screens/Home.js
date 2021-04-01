@@ -12,13 +12,17 @@ import venusImg from '../assets/img/venusmap1k.jpg';
 import mercuryImg from '../assets/img/mercurymap1k.jpg';
 import marsImg from '../assets/img/marsmap1k.jpg';
 import jupiterImg from '../assets/img/jupitermap1k.jpg';
+import saturnImg from '../assets/img/saturnmap1k.jpg';
+
 extend({ OrbitControls })
+
 const sunPivotPoint = new THREE.Object3D();
 const earthPivotPoint = new THREE.Object3D();
 const venusPivotPoint = new THREE.Object3D();
 const mercuryPivotPoint = new THREE.Object3D();
 const marsPivotPoint = new THREE.Object3D();
 const jupiterPivotPoint = new THREE.Object3D();
+const saturnPivotPoint = new THREE.Object3D();
 
 const BASE_EARTH_SIZE = .2;
 const BASE_EARTH_REVOLUTION_SPEED = 0.001;
@@ -35,6 +39,7 @@ function Sun(props) {
     mesh.current.add(earthPivotPoint);
     mesh.current.add(marsPivotPoint);
     mesh.current.add(jupiterPivotPoint);
+    mesh.current.add(saturnPivotPoint);
   })
 
   return (
@@ -273,6 +278,7 @@ const Scene = () => {
         </group>
         <Mars position={[BASE_EARTH_DISTANCE * 1.52, 0, 0]} />
         <Jupiter position={[BASE_EARTH_DISTANCE * 5.20, 0, 0]} />
+        <Saturn position={[BASE_EARTH_DISTANCE * 9.58, 0, 0]} />
         <Stars
           radius={200}
           depth={100}
@@ -296,5 +302,4 @@ export default function Home() {
       </Canvas>
     </>
   )
-}}
 }
