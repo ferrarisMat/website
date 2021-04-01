@@ -9,11 +9,13 @@ import Glow from '../Glow';
 import earthImg from '../assets/img/earthmap1k.jpg';
 import moonImg from '../assets/img/moonmap1k.jpg';
 import venusImg from '../assets/img/venusmap1k.jpg';
+import mercuryImg from '../assets/img/mercurymap1k.jpg';
 import marsImg from '../assets/img/marsmap1k.jpg';
 extend({ OrbitControls })
 const sunPivotPoint = new THREE.Object3D();
 const earthPivotPoint = new THREE.Object3D();
 const venusPivotPoint = new THREE.Object3D();
+const mercuryPivotPoint = new THREE.Object3D();
 const marsPivotPoint = new THREE.Object3D();
 
 const BASE_EARTH_SIZE = .2;
@@ -26,6 +28,8 @@ function Sun(props) {
 
   useFrame(() => {
     mesh.current.add(sunPivotPoint);
+    mesh.current.add(mercuryPivotPoint);
+    mesh.current.add(venusPivotPoint);
     mesh.current.add(earthPivotPoint);
     mesh.current.add(marsPivotPoint);
   })
@@ -46,6 +50,34 @@ function Sun(props) {
     </mesh>
   )
 }
+
+function Mercury(props) {
+  const mesh = useRef();
+  const texture = useLoader(THREE.TextureLoader, mercuryImg);
+
+  mercuryPivotPoint.rotation.y = 20;
+
+  useFrame(() => {
+    mercuryPivotPoint.add(mesh.current);
+    mesh.current.rotation.y -= (BASE_EARTH_ROTATION_SPEED / 245.83333333333334) * 100;
+    mercuryPivotPoint.rotation.y += (BASE_EARTH_REVOLUTION_SPEED / 24.084873374401095) * 100;
+  })
+
+  return (
+    <mesh
+      {...props}
+      ref={mesh}
+      scale={[1, 1, 1]}
+    >
+      <sphereGeometry attach="geometry" args={[BASE_EARTH_SIZE * 0.383, 32, 32]} />
+      <meshPhongMaterial
+        specular="0xFF0000"
+        map={texture}
+      />
+    </mesh>
+  )
+};
+
 function Venus(props) {
   const mesh = useRef();
   const texture = useLoader(THREE.TextureLoader, venusImg);
@@ -156,6 +188,7 @@ const Scene = () => {
       <Suspense fallback={null}>
         <pointLight position={[0, 0, -2.5]} intensity={.5} color="white" />
         <Sun position={[0, 0, -2.5]} />
+        <Mercury position={[BASE_EARTH_DISTANCE * 0.387, 0, 0]} />
         <Venus position={[BASE_EARTH_DISTANCE * 0.723, 0, 0]} />
         <group>
           <Earth
