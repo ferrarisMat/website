@@ -7,11 +7,46 @@ import Furl from '../assets/akfn/F.svg';
 import Nurl from '../assets/akfn/N.svg';
 import SixteenUrl from '../assets/akfn/16.svg';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader'
-import { MeshReflectorMaterial } from '@react-three/drei';
+import { MeshReflectorMaterial, Text } from '@react-three/drei';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing';
 import { useSpring, animated } from '@react-spring/three';
 import videoUrl from '../assets/video.mp4';
+import video2Url from '../assets/video2.mp4';
+import video3Url from '../assets/video3.mp4';
+import video4Url from '../assets/video4.mp4';
+import video5Url from '../assets/video5.mp4';
+import video6Url from '../assets/video6.mp4';
+import video7Url from '../assets/video7.mp4';
+import video8Url from '../assets/video8.mp4';
+import video9Url from '../assets/video9.mp4';
+import video10Url from '../assets/video10.mp4';
+import video11Url from '../assets/video11.mp4';
+import video12Url from '../assets/video12.mp4';
+import video13Url from '../assets/video13.mp4';
+import video14Url from '../assets/video14.mp4';
+import video15Url from '../assets/video15.mp4';
+import video16Url from '../assets/video16.mp4';
+import { Helmet } from 'react-helmet';
+
+const videos = [
+  videoUrl,
+  video2Url,
+  video3Url,
+  video4Url,
+  video5Url,
+  video6Url,
+  video7Url,
+  video8Url,
+  video9Url,
+  video10Url,
+  video11Url,
+  video12Url,
+  video13Url,
+  video14Url,
+  video15Url,
+  video16Url,
+];
 
 extend({ OrbitControls })
 
@@ -26,7 +61,7 @@ const SvgShape = ({ shape, color, index, onPointerOver, onPointerOut, scale }) =
         attach="material"
         color={color || 0x15F4EE}
         emissive={color || 0x15F4EE}
-        emissiveIntensity={5}
+        emissiveIntensity={2}
         side={THREE.DoubleSide}
         polygonOffset
         polygonOffsetFactor={index * -0.1}
@@ -253,20 +288,23 @@ function BoxBG(props) {
 
   const [video] = useState(() => {
     const vid = document.createElement("video");
-    vid.src = videoUrl;
-    vid.crossOrigin = "Anonymous";
+    vid.src = videos[Math.floor(Math.random() * videos.length)];
+    vid.playsInline = true;
+    vid.autoplay = true;
+    vid.crossOrigin = "anonymous";
+    vid.preload = "auto";
     return vid;
   });
 
   useEffect(() => {
     if(props.isPlaying){
-      video.src = videoUrl;
+      video.src = videos[Math.floor(Math.random() * videos.length)];
       video.play();
     } else {
       video.pause();
       video.currentTime = 0;
     }
-  }, [props, video])
+  }, [props.isPlaying, video])
 
   useFrame(() => {
     if(video.currentTime === video.duration){
@@ -339,15 +377,20 @@ const Scene = () => {
     camera,
   } = useThree();
   const [isOpen, setIsOpen] = useState(false);
+  const [isHover, setIsHover] = useState(false);
   
   const groupRef = useRef();
   const innerGroupRef = useRef();
   const lightRef = useRef();
+  const textRef = useRef();
 
   camera.position.z = 4.5
   const { rotation } = useSpring({ 
     rotation: isOpen ? THREE.Math.degToRad(-100) : 0,
     delay: !isOpen ? 200 : 0 
+  })
+  const { scale } = useSpring({ 
+    scale: isHover ? 1.4 : 0,
   })
   
   useFrame((el) => {
@@ -362,21 +405,43 @@ const Scene = () => {
       lightRef.current.position.y = el.mouse.y * 2;
       lightRef.current.position.z = 0.4
     }
+    if(textRef.current){
+      textRef.current.position.x = el.mouse.x / 6;
+      textRef.current.position.y = -2.5 + el.mouse.y / 12;
+    }
   })
 
   return (
     <>
       <Suspense fallback={null}>
-        {/* <ambientLight intensity={0.1} color="#D1D1D1" /> */}
         <pointLight ref={lightRef} intensity={0.6} color={0xFFFFFF} castShadow />
-        <animated.group ref={groupRef} rotation-y={rotation}>
-          <group ref={innerGroupRef} onClick={() => setIsOpen(!isOpen)}>
+        <animated.group
+          ref={groupRef}
+          rotation-y={rotation}
+        >
+          <group 
+            ref={innerGroupRef} 
+            onClick={() => {setIsOpen(!isOpen); setIsHover(false)}}
+            onPointerOver={() => setIsHover(true)}
+            onPointerOut={() => setIsHover(false)}
+          >
             <AKFNGroup />
             <BoxDoor />
           </group>
         </animated.group>
         <Plane />
         <BoxBG isPlaying={isOpen} onVideoEnd={(e) => setIsOpen(false)} />
+        <animated.group
+          scale={scale}
+          ref={textRef}
+          position-y={-2.5}
+        >
+          <Text 
+            color={0xFFFFFF}
+          >
+            {`click to ${isOpen ? "close" : "open"}`}
+          </Text>
+        </animated.group>
       </Suspense>
     </>
   )
@@ -384,19 +449,26 @@ const Scene = () => {
 
 export default function AKFN() {
   return (
-    <Canvas linear gl={{
-        powerPreference: "high-performance",
-        alpha: false,
-        antialias: false,
-        stencil: false,
-        depth: false
-      }}>
-      <Scene />
-      <EffectComposer multisampling={0} disableNormalPass={true}>
-        <Bloom intensity={1.5} luminanceThreshold={0.6} luminanceSmoothing={0.4} height={700} />
-        <Noise opacity={0.2} />
-        <Vignette eskil={false} offset={0.1} darkness={1.2} />
-      </EffectComposer>
-    </Canvas>
+    <>
+      <Helmet>
+        <html lang="en" />
+        <title>A(vent)KUFEN</title>
+        <link rel="icon" type="image/png" href="faviconakfn.ico" sizes="16x16" />
+      </Helmet>
+      <Canvas linear gl={{
+          powerPreference: "high-performance",
+          alpha: false,
+          antialias: false,
+          stencil: false,
+          depth: false
+        }}>
+        <Scene />
+        <EffectComposer multisampling={0} disableNormalPass={true}>
+          <Bloom intensity={1.7} luminanceThreshold={0.6} luminanceSmoothing={0.4} height={700} />
+          <Noise opacity={0.15} />
+          <Vignette eskil={false} offset={0.1} darkness={1.15} />
+        </EffectComposer>
+      </Canvas>
+    </>
   )
 }
