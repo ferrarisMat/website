@@ -11,7 +11,7 @@ import { MeshReflectorMaterial } from '@react-three/drei';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing';
 import { useSpring, animated } from '@react-spring/three';
-import videoUrl from '../assets/video2.mp4';
+import videoUrl from '../assets/video.mp4';
 
 extend({ OrbitControls })
 
