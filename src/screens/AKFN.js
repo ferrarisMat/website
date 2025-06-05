@@ -11,41 +11,41 @@ import { MeshReflectorMaterial, Text } from '@react-three/drei';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing';
 import { useSpring, animated } from '@react-spring/three';
-import videoUrl from '../assets/video.mp4';
-import video2Url from '../assets/video2.mp4';
-import video3Url from '../assets/video3.mp4';
-import video4Url from '../assets/video4.mp4';
-import video5Url from '../assets/video5.mp4';
-import video6Url from '../assets/video6.mp4';
-import video7Url from '../assets/video7.mp4';
-import video8Url from '../assets/video8.mp4';
-import video9Url from '../assets/video9.mp4';
-import video10Url from '../assets/video10.mp4';
-import video11Url from '../assets/video11.mp4';
-import video12Url from '../assets/video12.mp4';
-import video13Url from '../assets/video13.mp4';
-import video14Url from '../assets/video14.mp4';
-import video15Url from '../assets/video15.mp4';
-import video16Url from '../assets/video16.mp4';
+// import videoUrl from '../assets/video.mp4';
+// import video2Url from '../assets/video2.mp4';
+// import video3Url from '../assets/video3.mp4';
+// import video4Url from '../assets/video4.mp4';
+// import video5Url from '../assets/video5.mp4';
+// import video6Url from '../assets/video6.mp4';
+// import video7Url from '../assets/video7.mp4';
+// import video8Url from '../assets/video8.mp4';
+// import video9Url from '../assets/video9.mp4';
+// import video10Url from '../assets/video10.mp4';
+// import video11Url from '../assets/video11.mp4';
+// import video12Url from '../assets/video12.mp4';
+// import video13Url from '../assets/video13.mp4';
+// import video14Url from '../assets/video14.mp4';
+// import video15Url from '../assets/video15.mp4';
+// import video16Url from '../assets/video16.mp4';
 import { Helmet } from 'react-helmet';
 
 const videos = [
-  videoUrl,
-  video2Url,
-  video3Url,
-  video4Url,
-  video5Url,
-  video6Url,
-  video7Url,
-  video8Url,
-  video9Url,
-  video10Url,
-  video11Url,
-  video12Url,
-  video13Url,
-  video14Url,
-  video15Url,
-  video16Url,
+  // videoUrl,
+  // video2Url,
+  // video3Url,
+  // video4Url,
+  // video5Url,
+  // video6Url,
+  // video7Url,
+  // video8Url,
+  // video9Url,
+  // video10Url,
+  // video11Url,
+  // video12Url,
+  // video13Url,
+  // video14Url,
+  // video15Url,
+  // video16Url,
 ];
 
 extend({ OrbitControls })
