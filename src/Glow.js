@@ -6,8 +6,9 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass'
+import { EclipseShader } from './shaders/EclipseShader'
 
-extend({ EffectComposer, ShaderPass, RenderPass, UnrealBloomPass, FilmPass, })
+extend({ EffectComposer, ShaderPass, RenderPass, UnrealBloomPass, FilmPass })
 
 export function Glow({ children }) {
   const { gl, camera, size } = useThree()
@@ -26,16 +27,47 @@ export function Glow({ children }) {
   )
 }
 
-export function OldGlow({object}) {
+export function OldGlow({ sunRef }) {
   const composer = useRef()
   const { scene, gl, size, camera } = useThree()
   const aspect = useMemo(() => new THREE.Vector2(1024, 1024), [])
+  const eclipsePass = useRef()
+  
   useEffect(() => void composer.current.setSize(size.width, size.height), [size])
-  useFrame(() => composer.current.render(), 1)
+  
+  useFrame(() => {
+    if (sunRef.current && eclipsePass.current) {
+      // Update sun position in shader
+      const sunPosition = new THREE.Vector3()
+      sunRef.current.getWorldPosition(sunPosition)
+      sunPosition.project(camera)
+      eclipsePass.current.uniforms.sunPosition.value = sunPosition
+    }
+    composer.current.render()
+  }, 1)
+  
   return (
     <effectComposer ref={composer} args={[gl]}>
-      <renderPass attachArray="passes" scene={scene} camera={camera} attachObject={object} />
-      <unrealBloomPass attachArray="passes" args={[aspect, 1.5, 1, 0]} />
+      <renderPass attachArray="passes" scene={scene} camera={camera} />
+      <shaderPass 
+        ref={eclipsePass}
+        attachArray="passes"
+        args={[EclipseShader]}
+        uniforms-tDiffuse-value={null}
+        uniforms-tDepth-value={null}
+        uniforms-sunRadius-value={3.1}
+        uniforms-intensity-value={2.0}
+      />
+      <unrealBloomPass 
+        attachArray="passes" 
+        args={[
+          aspect,
+          2.3, 
+          0.2,
+          0.7
+        ]} 
+        toneMapping={THREE.NoToneMapping}
+      />
     </effectComposer>
   )
 }
