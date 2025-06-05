@@ -20,10 +20,32 @@ import neptuneImg from '../assets/img/neptunemap1k.jpg';
 
 extend({ OrbitControls })
 
+
+const ORBITAL_PERIODS = {
+  mercury: 88,
+  venus: 225,
+  earth: 365,
+  mars: 687,
+  jupiter: 4333,
+  saturn: 10759,
+  uranus: 30687,
+  neptune: 60190,
+  moon: 27.3
+};
+
 const BASE_EARTH_SIZE = .125;
-const BASE_EARTH_REVOLUTION_SPEED = 0.0001;
-const BASE_EARTH_ROTATION_SPEED = 0.001;
+
+
 const ASTRONOMICAL_UNIT = 8;
+
+const calculatePlanetPosition = (orbitalPeriod, referenceDate = new Date('2000-01-01')) => {
+  const now = new Date();
+  const daysSinceReference = (now - referenceDate) / (1000 * 60 * 60 * 24);
+  const orbitsCompleted = daysSinceReference / orbitalPeriod;
+  const currentPosition = (orbitsCompleted % 1) * 2 * Math.PI;
+  
+  return currentPosition;
+};
 
 const Sun = React.forwardRef((props, ref) => {
   const mesh = useRef();
@@ -63,9 +85,9 @@ function Mercury(props) {
   const mercuryGroup = useRef();
   const texture = useLoader(THREE.TextureLoader, mercuryImg);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (mesh.current) {
-      mesh.current.rotation.y -= (BASE_EARTH_REVOLUTION_SPEED / 245.83333333333334) * 100;
+      mesh.current.rotation.y += props.baseEarthRotationSpeed * (1 / 58.6) * delta;
     }
   })
 
@@ -100,9 +122,9 @@ function Venus(props) {
   const venusGroup = useRef();
   const texture = useLoader(THREE.TextureLoader, venusImg);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (mesh.current) {
-      mesh.current.rotation.y -= (BASE_EARTH_REVOLUTION_SPEED / 24300) * 100;
+      mesh.current.rotation.y -= props.baseEarthRotationSpeed * (1 / 243) * delta;
     }
   })
 
@@ -139,14 +161,12 @@ function Earth(props) {
   const texture = useLoader(THREE.TextureLoader, earthImg);
   const { camera } = useThree();
   
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (mesh.current) {
-      mesh.current.rotation.y += BASE_EARTH_ROTATION_SPEED;
+      mesh.current.rotation.y += props.baseEarthRotationSpeed * delta;
     }
-    // Update viewVector and sunPosition for the atmosphere shader
     if (atmosphereRef.current) {
       atmosphereRef.current.material.uniforms.viewVector.value.copy(camera.position);
-      // Sun is at origin (0, 0, 0)
       atmosphereRef.current.material.uniforms.sunPosition.value.set(0, 0, 0);
     }
   })
@@ -174,7 +194,6 @@ function Earth(props) {
           map={texture}
         />
       </mesh>
-      {/* Atmosphere with custom shader */}
       <mesh ref={atmosphereRef} scale={[1.04, 1.04, 1.04]} onClick={handleEarthClick}>
         <sphereGeometry attach="geometry" args={[BASE_EARTH_SIZE, 128, 128]} />
         <shaderMaterial
@@ -191,7 +210,7 @@ function Earth(props) {
           depthWrite={false}
         />
       </mesh>
-      <Moon />
+      <Moon baseMoonRevolutionSpeed={props.baseMoonRevolutionSpeed} />
     </group>
   )
 }
@@ -201,10 +220,10 @@ function Moon(props) {
   const moonGroup = useRef();
   const texture = useLoader(THREE.TextureLoader, moonImg);
   
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (mesh.current && moonGroup.current) {
-      moonGroup.current.rotation.y += BASE_EARTH_REVOLUTION_SPEED * 13.37;
-      moonGroup.current.rotation.x = Math.PI / 36;
+      moonGroup.current.rotation.y += props.baseMoonRevolutionSpeed * delta;
+      moonGroup.current.rotation.x = Math.PI / 20;
     }
   })
 
@@ -230,9 +249,9 @@ function Mars(props) {
   const marsGroup = useRef();
   const texture = useLoader(THREE.TextureLoader, marsImg);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (mesh.current) {
-      mesh.current.rotation.y += BASE_EARTH_ROTATION_SPEED * 1.1;
+      mesh.current.rotation.y += props.baseEarthRotationSpeed * (1 / 1.03) * delta;
     }
   })
 
@@ -267,9 +286,9 @@ function Jupiter(props) {
   const jupiterGroup = useRef();
   const texture = useLoader(THREE.TextureLoader, jupiterImg);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (mesh.current) {
-      mesh.current.rotation.y -= (BASE_EARTH_ROTATION_SPEED / 41.66666666666667) * 100;
+      mesh.current.rotation.y += props.baseEarthRotationSpeed * (1 / 0.41) * delta;
     }
   })
 
@@ -304,9 +323,9 @@ function Uranus(props) {
   const uranusGroup = useRef();
   const texture = useLoader(THREE.TextureLoader, uranusImg);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (mesh.current) {
-      mesh.current.rotation.y -= (BASE_EARTH_ROTATION_SPEED / 70.85234875) * 100;
+      mesh.current.rotation.y -= props.baseEarthRotationSpeed * (1 / 0.72) * delta;
     }
   })
 
@@ -341,9 +360,9 @@ function Neptune(props) {
   const neptuneGroup = useRef();
   const texture = useLoader(THREE.TextureLoader, neptuneImg);
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (mesh.current) {
-      mesh.current.rotation.y -= (BASE_EARTH_ROTATION_SPEED / 16.11) * 100;
+      mesh.current.rotation.y += props.baseEarthRotationSpeed * (1 / 0.67) * delta;
     }
   })
 
@@ -394,9 +413,9 @@ function Saturn(props) {
     color: 0x353535
   });
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (planet.current && ring.current) {
-      planet.current.rotation.y -= (BASE_EARTH_ROTATION_SPEED / 45.83333333333333) * 100;
+      planet.current.rotation.y += props.baseEarthRotationSpeed * (1 / 0.45) * delta;
       
       ring.current.position.x = planet.current.position.x;
       ring.current.position.y = planet.current.position.y;
@@ -462,7 +481,7 @@ function Universe(props) {
   )
 }
 
-const Scene = () => {
+const Scene = ({ dayHours, baseEarthRotationSpeed, baseEarthRevolutionSpeed, baseMoonRevolutionSpeed, onGoToPlanet }) => {
   const {
     camera,
     gl: { domElement }
@@ -475,8 +494,8 @@ const Scene = () => {
   const [followingPlanet, setFollowingPlanet] = useState(null);
   const [planetPivotRef, setPlanetPivotRef] = useState(null);
   const [planetDistance, setPlanetDistance] = useState(0);
+  const [planetsInitialized, setPlanetsInitialized] = useState(false);
   
-  // Refs for pivot points
   const mercuryPivotRef = useRef();
   const venusPivotRef = useRef();
   const earthPivotRef = useRef();
@@ -486,7 +505,7 @@ const Scene = () => {
   const uranusPivotRef = useRef();
   const neptunePivotRef = useRef();
   
-  const handlePlanetClick = (position, planetRef, planetName) => {
+  const handlePlanetClick = React.useCallback((position, planetRef, planetName) => {
     setFollowingPlanet(planetName);
     
     switch(planetName) {
@@ -532,32 +551,47 @@ const Scene = () => {
     }
 
     setIsTransitioning(true);
-  };
+  }, [mercuryPivotRef, venusPivotRef, earthPivotRef, marsPivotRef, jupiterPivotRef, saturnPivotRef, uranusPivotRef, neptunePivotRef]);
 
   useFrame((state, delta) => {
+    // Initialize planet positions on first frame when refs are ready
+    if (!planetsInitialized && mercuryPivotRef.current && venusPivotRef.current && earthPivotRef.current) {
+      mercuryPivotRef.current.rotation.y = calculatePlanetPosition(ORBITAL_PERIODS.mercury);
+      venusPivotRef.current.rotation.y = calculatePlanetPosition(ORBITAL_PERIODS.venus);
+      earthPivotRef.current.rotation.y = calculatePlanetPosition(ORBITAL_PERIODS.earth);
+      marsPivotRef.current.rotation.y = calculatePlanetPosition(ORBITAL_PERIODS.mars);
+      jupiterPivotRef.current.rotation.y = calculatePlanetPosition(ORBITAL_PERIODS.jupiter);
+      saturnPivotRef.current.rotation.y = calculatePlanetPosition(ORBITAL_PERIODS.saturn);
+      uranusPivotRef.current.rotation.y = calculatePlanetPosition(ORBITAL_PERIODS.uranus);
+      neptunePivotRef.current.rotation.y = calculatePlanetPosition(ORBITAL_PERIODS.neptune);
+      setPlanetsInitialized(true);
+      return; // Skip movement on initialization frame
+    }
+
+
     if (mercuryPivotRef.current) {
-      mercuryPivotRef.current.rotation.y += (BASE_EARTH_REVOLUTION_SPEED / 24.084873374401095) * 100;
+      mercuryPivotRef.current.rotation.y += baseEarthRevolutionSpeed * (ORBITAL_PERIODS.earth / ORBITAL_PERIODS.mercury) * delta;
     }
     if (venusPivotRef.current) {
-      venusPivotRef.current.rotation.y += (BASE_EARTH_REVOLUTION_SPEED / 61) * 100;
+      venusPivotRef.current.rotation.y += baseEarthRevolutionSpeed * (ORBITAL_PERIODS.earth / ORBITAL_PERIODS.venus) * delta;
     }
     if (earthPivotRef.current) {
-      earthPivotRef.current.rotation.y += BASE_EARTH_REVOLUTION_SPEED;
+      earthPivotRef.current.rotation.y += baseEarthRevolutionSpeed * delta;
     }
     if (marsPivotRef.current) {
-      marsPivotRef.current.rotation.y += (BASE_EARTH_REVOLUTION_SPEED / 188.07118412046543) * 100;
+      marsPivotRef.current.rotation.y += baseEarthRevolutionSpeed * (ORBITAL_PERIODS.earth / ORBITAL_PERIODS.mars) * delta;
     }
     if (jupiterPivotRef.current) {
-      jupiterPivotRef.current.rotation.y += (BASE_EARTH_REVOLUTION_SPEED / 1186) * 100;
+      jupiterPivotRef.current.rotation.y += baseEarthRevolutionSpeed * (ORBITAL_PERIODS.earth / ORBITAL_PERIODS.jupiter) * delta;
     }
     if (saturnPivotRef.current) {
-      saturnPivotRef.current.rotation.y += (BASE_EARTH_REVOLUTION_SPEED / 2939.986310746064) * 100;
+      saturnPivotRef.current.rotation.y += baseEarthRevolutionSpeed * (ORBITAL_PERIODS.earth / ORBITAL_PERIODS.saturn) * delta;
     }
     if (uranusPivotRef.current) {
-      uranusPivotRef.current.rotation.y += (BASE_EARTH_REVOLUTION_SPEED / 8400) * 100;
+      uranusPivotRef.current.rotation.y -= baseEarthRevolutionSpeed * (ORBITAL_PERIODS.earth / ORBITAL_PERIODS.uranus) * delta;
     }
     if (neptunePivotRef.current) {
-      neptunePivotRef.current.rotation.y += (BASE_EARTH_REVOLUTION_SPEED / 164000.79132) * 100;
+      neptunePivotRef.current.rotation.y -= baseEarthRevolutionSpeed * (ORBITAL_PERIODS.earth / ORBITAL_PERIODS.neptune) * delta;
     }
     
     if (followingPlanet && planetPivotRef?.current) {
@@ -625,9 +659,11 @@ const Scene = () => {
       controlsRef.current.target.set(0, 0, 0);
       controlsRef.current.update();
     }
+
+
   }, [camera]);
 
-  const handleSunClick = (e) => {
+  const handleSunClick = React.useCallback((e) => {
     setFollowingPlanet(null);
     setPlanetPivotRef(null);
     
@@ -637,7 +673,37 @@ const Scene = () => {
     setTargetPosition(initialPos);
     setInitialClickPosition(sunPos);
     setIsTransitioning(true);
-  };
+  }, []);
+
+  const goToPlanet = React.useCallback((planetName) => {
+    const planetPositions = {
+      'Mercury': new THREE.Vector3(ASTRONOMICAL_UNIT * 0.387, 0, 0),
+      'Venus': new THREE.Vector3(ASTRONOMICAL_UNIT * 0.723, 0, 0),
+      'Earth': new THREE.Vector3(ASTRONOMICAL_UNIT, 0, 0),
+      'Mars': new THREE.Vector3(ASTRONOMICAL_UNIT * 1.52, 0, 0),
+      'Jupiter': new THREE.Vector3(ASTRONOMICAL_UNIT * 5.20, 0, 0),
+      'Saturn': new THREE.Vector3(ASTRONOMICAL_UNIT * 9.58, 0, 0),
+      'Uranus': new THREE.Vector3(ASTRONOMICAL_UNIT * 19.22, 0, 0),
+      'Neptune': new THREE.Vector3(ASTRONOMICAL_UNIT * 30.07, 0, 0),
+      'Sun': new THREE.Vector3(0, 0, 0)
+    };
+
+    if (planetName === 'Sun') {
+      handleSunClick();
+    } else {
+      const position = planetPositions[planetName];
+      if (position) {
+        handlePlanetClick(position, null, planetName);
+      }
+    }
+  }, [handleSunClick, handlePlanetClick]);
+
+  // Expose goToPlanet function to parent component
+  React.useEffect(() => {
+    if (onGoToPlanet) {
+      onGoToPlanet.current = goToPlanet;
+    }
+  }, [onGoToPlanet, goToPlanet]);
 
   return (
     <>
@@ -654,6 +720,7 @@ const Scene = () => {
         />
         <object3D ref={mercuryPivotRef}>
           <Mercury 
+            baseEarthRotationSpeed={baseEarthRotationSpeed}
             onClick={(e, pos) => {
               handlePlanetClick(pos, e.target, 'Mercury');
             }}
@@ -661,6 +728,7 @@ const Scene = () => {
         </object3D>
         <object3D ref={venusPivotRef}>
           <Venus 
+            baseEarthRotationSpeed={baseEarthRotationSpeed}
             onClick={(e, pos) => {
               handlePlanetClick(pos, e.target, 'Venus');
             }}
@@ -668,6 +736,8 @@ const Scene = () => {
         </object3D>
         <object3D ref={earthPivotRef}>
           <Earth
+            baseEarthRotationSpeed={baseEarthRotationSpeed}
+            baseMoonRevolutionSpeed={baseMoonRevolutionSpeed}
             onClick={(e, pos) => {
               handlePlanetClick(pos, e.target, 'Earth');
             }}
@@ -675,6 +745,7 @@ const Scene = () => {
         </object3D>
         <object3D ref={marsPivotRef}>
           <Mars 
+            baseEarthRotationSpeed={baseEarthRotationSpeed}
             onClick={(e, pos) => {
               handlePlanetClick(pos, e.target, 'Mars');
             }}
@@ -682,6 +753,7 @@ const Scene = () => {
         </object3D>
         <object3D ref={jupiterPivotRef}>
           <Jupiter 
+            baseEarthRotationSpeed={baseEarthRotationSpeed}
             onClick={(e, pos) => {
               handlePlanetClick(pos, e.target, 'Jupiter');
             }}
@@ -689,6 +761,7 @@ const Scene = () => {
         </object3D>
         <object3D ref={saturnPivotRef}>
           <Saturn
+            baseEarthRotationSpeed={baseEarthRotationSpeed}
             onClick={(e, pos) => {
               handlePlanetClick(pos, e.target, 'Saturn');
             }}
@@ -696,6 +769,7 @@ const Scene = () => {
         </object3D>
         <object3D ref={uranusPivotRef}>
           <Uranus 
+            baseEarthRotationSpeed={baseEarthRotationSpeed}
             onClick={(e, pos) => {
               handlePlanetClick(pos, e.target, 'Uranus');
             }}
@@ -703,6 +777,7 @@ const Scene = () => {
         </object3D>
         <object3D ref={neptunePivotRef}>
           <Neptune 
+            baseEarthRotationSpeed={baseEarthRotationSpeed}
             onClick={(e, pos) => {
               handlePlanetClick(pos, e.target, 'Neptune');
             }}
@@ -730,9 +805,86 @@ const Scene = () => {
 }
 
 export default function Home() {
+  const [dayHours, setDayHours] = useState(24);
+  const goToPlanetRef = useRef();
+
+  // Calculate speeds based on current dayHours
+  const baseEarthRotationSpeed = (2 * Math.PI) / (dayHours * 3600);
+  const baseEarthRevolutionSpeed = (2 * Math.PI) / (365 * dayHours * 3600);
+  const baseMoonRevolutionSpeed = (2 * Math.PI) / (ORBITAL_PERIODS.moon * dayHours * 3600);
+
+  const handleDayHoursChange = (e) => {
+    setDayHours(parseFloat(e.target.value));
+  };
+
   return (
-    <Canvas>
-      <Scene />
-    </Canvas>
+    <>
+      <div className='gui' style={{
+        position: 'absolute',
+        top: 10,
+        left: 10,
+        zIndex: 1000,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        padding: '15px',
+        borderRadius: '8px',
+        color: 'white',
+        fontSize: '14px',
+        fontFamily: 'Arial, sans-serif',
+        minWidth: '200px',
+      }}>
+        <div style={{ marginBottom: '10px' }}>
+          <label style={{ display: 'block', marginBottom: '5px' }}>
+            Time Speed: {dayHours.toFixed(2)} hours/day
+          </label>
+                     <input
+             type="range"
+             min="0.01"
+             max="24"
+             step="0.01"
+             value={dayHours}
+             onChange={handleDayHoursChange}
+            style={{
+              width: '100%',
+              height: '5px',
+              backgroundColor: '#333',
+              outline: 'none',
+              borderRadius: '5px',
+            }}
+          />
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginTop: '2px' }}>
+            <span>Ultra Fast</span>
+            <span>Realistic</span>
+          </div>
+          <button onClick={() => setDayHours(24)}>Reset</button>
+          <button onClick={() => setDayHours(1)}>1 hour/day</button>
+          <button onClick={() => setDayHours(0.001)}>3,6 seconds/day</button>
+          <button onClick={() => setDayHours(0.0001)}>360 ms/day</button>
+        </div>
+          <div style={{ fontSize: '12px', color: '#ccc' }}>
+           <p>Earth rotation: {dayHours < 1 ? `${(dayHours * 60).toFixed(2)} min` : `${dayHours.toFixed(1)} hours`}</p>
+           <p>Earth orbit: {dayHours < 1 ? `${(365 * dayHours).toFixed(2)} hours` : `${(365 * dayHours / 24).toFixed(1)} days`}</p>
+        </div>
+        <div style={{ fontSize: '12px', color: '#ccc', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px', marginTop: '10px' }}>
+          <button onClick={() => goToPlanetRef.current?.('Sun')} style={{ padding: '5px', fontSize: '11px' }}>Go to Sun</button>
+          <button onClick={() => goToPlanetRef.current?.('Mercury')} style={{ padding: '5px', fontSize: '11px' }}>Go to Mercury</button>
+          <button onClick={() => goToPlanetRef.current?.('Venus')} style={{ padding: '5px', fontSize: '11px' }}>Go to Venus</button>
+          <button onClick={() => goToPlanetRef.current?.('Earth')} style={{ padding: '5px', fontSize: '11px' }}>Go to Earth</button>
+          <button onClick={() => goToPlanetRef.current?.('Mars')} style={{ padding: '5px', fontSize: '11px' }}>Go to Mars</button>
+          <button onClick={() => goToPlanetRef.current?.('Jupiter')} style={{ padding: '5px', fontSize: '11px' }}>Go to Jupiter</button>
+          <button onClick={() => goToPlanetRef.current?.('Saturn')} style={{ padding: '5px', fontSize: '11px' }}>Go to Saturn</button>
+          <button onClick={() => goToPlanetRef.current?.('Uranus')} style={{ padding: '5px', fontSize: '11px' }}>Go to Uranus</button>
+          <button onClick={() => goToPlanetRef.current?.('Neptune')} style={{ padding: '5px', fontSize: '11px' }}>Go to Neptune</button>
+        </div>
+      </div>
+      <Canvas>
+        <Scene 
+          dayHours={dayHours}
+          baseEarthRotationSpeed={baseEarthRotationSpeed}
+          baseEarthRevolutionSpeed={baseEarthRevolutionSpeed}
+          baseMoonRevolutionSpeed={baseMoonRevolutionSpeed}
+          onGoToPlanet={goToPlanetRef}
+        />
+      </Canvas>
+    </>
   )
 }
