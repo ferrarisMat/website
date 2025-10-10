@@ -6,7 +6,7 @@ import AKFN from './screens/AKFN';
 
 export default function Approot() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/website">
       <Switch>
         <Route path="/" exact component={Home} />
         <Route path="/AKFN" exact component={AKFN} />
