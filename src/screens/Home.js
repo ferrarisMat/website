@@ -806,6 +806,7 @@ const Scene = ({ dayHours, baseEarthRotationSpeed, baseEarthRevolutionSpeed, bas
 
 export default function Home() {
   const [dayHours, setDayHours] = useState(24);
+  const [showSettings, setShowSettings] = useState(false);
   const goToPlanetRef = useRef();
 
   // Calculate speeds based on current dayHours
@@ -813,69 +814,51 @@ export default function Home() {
   const baseEarthRevolutionSpeed = (2 * Math.PI) / (365 * dayHours * 3600);
   const baseMoonRevolutionSpeed = (2 * Math.PI) / (ORBITAL_PERIODS.moon * dayHours * 3600);
 
-  const handleDayHoursChange = (e) => {
-    setDayHours(parseFloat(e.target.value));
-  };
-
   return (
     <>
-      <div className='gui' style={{
-        position: 'absolute',
-        top: 10,
-        left: 10,
-        zIndex: 1000,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        padding: '15px',
-        borderRadius: '8px',
-        color: 'white',
-        fontSize: '14px',
-        fontFamily: 'Arial, sans-serif',
-        minWidth: '200px',
-      }}>
-        <div style={{ marginBottom: '10px' }}>
-          <label style={{ display: 'block', marginBottom: '5px' }}>
-            Time Speed: {dayHours.toFixed(2)} hours/day
-          </label>
-                     <input
-             type="range"
-             min="0.01"
-             max="24"
-             step="0.01"
-             value={dayHours}
-             onChange={handleDayHoursChange}
-            style={{
-              width: '100%',
-              height: '5px',
-              backgroundColor: '#333',
-              outline: 'none',
-              borderRadius: '5px',
-            }}
-          />
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginTop: '2px' }}>
-            <span>Ultra Fast</span>
-            <span>Realistic</span>
-          </div>
-          <button onClick={() => setDayHours(24)}>Reset</button>
-          <button onClick={() => setDayHours(1)}>1 hour/day</button>
-          <button onClick={() => setDayHours(0.001)}>3,6 seconds/day</button>
-          <button onClick={() => setDayHours(0.0001)}>360 ms/day</button>
+        <div className='gui' style={{
+          position: 'absolute',
+          top: 10,
+          left: 10,
+          zIndex: 1000,
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          padding: '15px',
+          borderRadius: '8px',
+          color: 'white',
+          fontSize: '14px',
+          fontFamily: 'Arial, sans-serif',
+          minWidth: '200px',
+        }}>
+          {showSettings && (
+            <>
+              <div style={{ marginBottom: '10px' }}>
+                <label style={{ display: 'block', marginBottom: '5px' }}>
+                  Time Speed: {dayHours.toFixed(2)} hours/day
+                </label>
+                <button onClick={() => setDayHours(24)}>Reset</button>
+                <button onClick={() => setDayHours(1)}>1 hour/day</button>
+                <button onClick={() => setDayHours(0.001)}>3,6 seconds/day</button>
+                <button onClick={() => setDayHours(0.0001)}>360 ms/day</button>
+              </div>
+                <div style={{ fontSize: '12px', color: '#ccc' }}>
+                <p>Earth rotation: {dayHours < 1 ? `${(dayHours * 60).toFixed(2)} min` : `${dayHours.toFixed(1)} hours`}</p>
+                <p>Earth orbit: {dayHours < 1 ? `${(365 * dayHours).toFixed(2)} hours` : `${(365 * dayHours / 24).toFixed(1)} days`}</p>
+              </div>
+              <div style={{ fontSize: '12px', color: '#ccc', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px', marginTop: '10px' }}>
+                <button onClick={() => goToPlanetRef.current?.('Sun')} style={{ padding: '5px', fontSize: '11px' }}>Go to Sun</button>
+                <button onClick={() => goToPlanetRef.current?.('Mercury')} style={{ padding: '5px', fontSize: '11px' }}>Go to Mercury</button>
+                <button onClick={() => goToPlanetRef.current?.('Venus')} style={{ padding: '5px', fontSize: '11px' }}>Go to Venus</button>
+                <button onClick={() => goToPlanetRef.current?.('Earth')} style={{ padding: '5px', fontSize: '11px' }}>Go to Earth</button>
+                <button onClick={() => goToPlanetRef.current?.('Mars')} style={{ padding: '5px', fontSize: '11px' }}>Go to Mars</button>
+                <button onClick={() => goToPlanetRef.current?.('Jupiter')} style={{ padding: '5px', fontSize: '11px' }}>Go to Jupiter</button>
+                <button onClick={() => goToPlanetRef.current?.('Saturn')} style={{ padding: '5px', fontSize: '11px' }}>Go to Saturn</button>
+                <button onClick={() => goToPlanetRef.current?.('Uranus')} style={{ padding: '5px', fontSize: '11px' }}>Go to Uranus</button>
+                <button onClick={() => goToPlanetRef.current?.('Neptune')} style={{ padding: '5px', fontSize: '11px' }}>Go to Neptune</button>
+              </div>
+            </>
+          )}
+          <button onClick={() => setShowSettings(!showSettings)} style={{width: '100%', padding: '5px', fontSize: '11px', ...showSettings && {marginTop: '10px'}}}>{showSettings ? 'Hide Settings' : 'Show Settings'}</button>
         </div>
-          <div style={{ fontSize: '12px', color: '#ccc' }}>
-           <p>Earth rotation: {dayHours < 1 ? `${(dayHours * 60).toFixed(2)} min` : `${dayHours.toFixed(1)} hours`}</p>
-           <p>Earth orbit: {dayHours < 1 ? `${(365 * dayHours).toFixed(2)} hours` : `${(365 * dayHours / 24).toFixed(1)} days`}</p>
-        </div>
-        <div style={{ fontSize: '12px', color: '#ccc', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px', marginTop: '10px' }}>
-          <button onClick={() => goToPlanetRef.current?.('Sun')} style={{ padding: '5px', fontSize: '11px' }}>Go to Sun</button>
-          <button onClick={() => goToPlanetRef.current?.('Mercury')} style={{ padding: '5px', fontSize: '11px' }}>Go to Mercury</button>
-          <button onClick={() => goToPlanetRef.current?.('Venus')} style={{ padding: '5px', fontSize: '11px' }}>Go to Venus</button>
-          <button onClick={() => goToPlanetRef.current?.('Earth')} style={{ padding: '5px', fontSize: '11px' }}>Go to Earth</button>
-          <button onClick={() => goToPlanetRef.current?.('Mars')} style={{ padding: '5px', fontSize: '11px' }}>Go to Mars</button>
-          <button onClick={() => goToPlanetRef.current?.('Jupiter')} style={{ padding: '5px', fontSize: '11px' }}>Go to Jupiter</button>
-          <button onClick={() => goToPlanetRef.current?.('Saturn')} style={{ padding: '5px', fontSize: '11px' }}>Go to Saturn</button>
-          <button onClick={() => goToPlanetRef.current?.('Uranus')} style={{ padding: '5px', fontSize: '11px' }}>Go to Uranus</button>
-          <button onClick={() => goToPlanetRef.current?.('Neptune')} style={{ padding: '5px', fontSize: '11px' }}>Go to Neptune</button>
-        </div>
-      </div>
       <Canvas>
         <Scene 
           dayHours={dayHours}
