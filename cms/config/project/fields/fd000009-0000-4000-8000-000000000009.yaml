@@ -1,0 +1,16 @@
+contentColumnType: null
+fieldGroup: fg000001-0000-4000-8000-000000000001
+handle: artists
+instructions: ''
+name: Artists
+required: false
+searchable: false
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Matrix
+settings:
+  minEntries: null
+  maxEntries: null
+  viewMode: list
+  entryTypes:
+    - et000002-0000-4000-8000-000000000002

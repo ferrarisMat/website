@@ -1,0 +1,17 @@
+contentColumnType: text
+fieldGroup: fg000001-0000-4000-8000-000000000001
+handle: countryDescription
+instructions: 'A short description of the DnB scene in this country.'
+name: Description
+required: false
+searchable: true
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\PlainText
+settings:
+  byteLimit: null
+  charLimit: null
+  columnType: text
+  multiline: true
+  initialRows: 4
+  uiMode: normal

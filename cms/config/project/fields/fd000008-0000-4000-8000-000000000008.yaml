@@ -1,0 +1,26 @@
+contentColumnType: text
+fieldGroup: fg000001-0000-4000-8000-000000000001
+handle: links
+instructions: 'Social media, Soundcloud, Bandcamp, etc.'
+name: Links
+required: false
+searchable: false
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Table
+settings:
+  addRowLabel: 'Add a link'
+  columnType: text
+  columns:
+    col1:
+      heading: Name
+      type: singleline
+      width: '40%'
+    col2:
+      heading: URL
+      type: url
+      width: '60%'
+  defaults: []
+  minRows: null
+  maxRows: null
+  staticRows: false

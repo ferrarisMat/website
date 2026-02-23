@@ -1,0 +1,61 @@
+handle: country
+hasTitleField: true
+name: Country
+section: sc000001-0000-4000-8000-000000000001
+titleFormat: null
+titleTranslationKeyFormat: null
+titleTranslationMethod: none
+fieldLayouts:
+  fl000001-0000-4000-8000-000000000001:
+    tabs:
+      - uid: tb000001-0000-4000-8000-000000000001
+        name: Content
+        sortOrder: 1
+        elements:
+          - type: craft\fieldlayoutelements\TitleField
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: true
+            width: 100
+          - type: craft\fieldlayoutelements\CustomField
+            fieldUid: fd000001-0000-4000-8000-000000000001
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: false
+            width: 100
+          - type: craft\fieldlayoutelements\CustomField
+            fieldUid: fd000002-0000-4000-8000-000000000002
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: false
+            width: 50
+          - type: craft\fieldlayoutelements\CustomField
+            fieldUid: fd000003-0000-4000-8000-000000000003
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: false
+            width: 50
+          - type: craft\fieldlayoutelements\CustomField
+            fieldUid: fd000004-0000-4000-8000-000000000004
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: false
+            width: 100
+          - type: craft\fieldlayoutelements\CustomField
+            fieldUid: fd000010-0000-4000-8000-000000000010
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: false
+            width: 100

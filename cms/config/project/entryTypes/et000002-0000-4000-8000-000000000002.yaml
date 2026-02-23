@@ -1,0 +1,38 @@
+handle: artist
+hasTitleField: false
+name: Artist
+section: null
+titleFormat: '{artistName}'
+titleTranslationKeyFormat: null
+titleTranslationMethod: none
+fieldLayouts:
+  fl000003-0000-4000-8000-000000000003:
+    tabs:
+      - uid: tb000003-0000-4000-8000-000000000003
+        name: Content
+        sortOrder: 1
+        elements:
+          - type: craft\fieldlayoutelements\CustomField
+            fieldUid: fd000006-0000-4000-8000-000000000006
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: false
+            width: 100
+          - type: craft\fieldlayoutelements\CustomField
+            fieldUid: fd000007-0000-4000-8000-000000000007
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: false
+            width: 100
+          - type: craft\fieldlayoutelements\CustomField
+            fieldUid: fd000008-0000-4000-8000-000000000008
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: false
+            width: 100

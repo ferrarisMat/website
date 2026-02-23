@@ -1,0 +1,17 @@
+RewriteEngine On
+
+# ── CORS for the React frontend ───────────────────────────────────────────────
+# Handle pre-flight OPTIONS requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^ - [R=204,L]
+
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Craft-Token"
+
+# ── Craft routing ─────────────────────────────────────────────────────────────
+# Send would-be 404 requests to Craft
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/(favicon\.ico|apple-touch-icon.*\.png)$ [NC]
+RewriteRule (.+) index.php?p=$1 [QSA,L]

@@ -1,0 +1,17 @@
+contentColumnType: string
+fieldGroup: fg000001-0000-4000-8000-000000000001
+handle: artistName
+instructions: 'Full artist or act name.'
+name: 'Artist Name'
+required: false
+searchable: true
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\PlainText
+settings:
+  byteLimit: null
+  charLimit: 200
+  columnType: string
+  multiline: false
+  initialRows: 2
+  uiMode: normal

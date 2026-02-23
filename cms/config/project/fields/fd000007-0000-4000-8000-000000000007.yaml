@@ -1,0 +1,17 @@
+contentColumnType: text
+fieldGroup: fg000001-0000-4000-8000-000000000001
+handle: artistBio
+instructions: 'Short biography or description of the artist.'
+name: Bio
+required: false
+searchable: true
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\PlainText
+settings:
+  byteLimit: null
+  charLimit: null
+  columnType: text
+  multiline: true
+  initialRows: 5
+  uiMode: normal

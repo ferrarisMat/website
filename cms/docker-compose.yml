@@ -1,0 +1,38 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - .:/var/www/html
+      # Persist composer vendor cache across rebuilds
+      - composer_cache:/root/.composer/cache
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    env_file: .env
+    environment:
+      CRAFT_DB_SERVER: mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ${CRAFT_DB_DATABASE:-craft}
+      MYSQL_USER: ${CRAFT_DB_USER:-craft}
+      MYSQL_PASSWORD: ${CRAFT_DB_PASSWORD:-craft}
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysql_data:
+  composer_cache:

@@ -1,0 +1,22 @@
+dateModified: 1771543295
+email:
+  fromEmail: mat.ferraris@gmail.com
+  fromName: 'Drum and bass around the world'
+  transportType: craft\mail\transportadapters\Sendmail
+meta:
+  __names__:
+    669041e3-4e7b-4b86-938b-70fa1ea7b456: 'Drum and bass around the world' # Drum and bass around the world
+    cd9850c4-f40e-4ad3-ae7f-cb809b250ecc: 'Drum and bass around the world' # Drum and bass around the world
+system:
+  edition: solo
+  live: true
+  name: 'Drum and bass around the world'
+  schemaVersion: 5.9.0.8
+  timeZone: America/Los_Angeles
+users:
+  allowPublicRegistration: false
+  defaultGroup: null
+  photoSubpath: null
+  photoVolumeUid: null
+  require2fa: false
+  requireEmailVerification: true

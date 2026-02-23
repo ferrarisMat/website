@@ -1,0 +1,18 @@
+contentColumnType: 'decimal(10,6)'
+fieldGroup: fg000001-0000-4000-8000-000000000001
+handle: latitude
+instructions: 'Latitude in decimal degrees (e.g. 51.5074).'
+name: Latitude
+required: false
+searchable: false
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Number
+settings:
+  defaultValue: null
+  min: -90
+  max: 90
+  decimals: 6
+  prefix: ''
+  suffix: '°'
+  size: null

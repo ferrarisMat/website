@@ -1,0 +1,44 @@
+# Fetch all countries with their full DnB scene data.
+# Endpoint: POST http://localhost:8080/api
+# Headers:  Content-Type: application/json
+#           (no auth token needed — public schema)
+#
+# Usage from React:
+#   const res = await fetch('http://localhost:8080/api', {
+#     method: 'POST',
+#     headers: { 'Content-Type': 'application/json' },
+#     body: JSON.stringify({ query: GET_COUNTRIES }),
+#   });
+#   const { data } = await res.json();
+
+query GetCountries {
+  entries(section: "countries") {
+    id
+    title
+
+    ... on countries_country_Entry {
+      countryDescription
+      latitude
+      longitude
+      distance
+
+      subGenres {
+        ... on subGenres_subGenre_Entry {
+          subGenreName
+
+          artists {
+            ... on artists_artist_Entry {
+              artistName
+              artistBio
+
+              links {
+                col1  # Name
+                col2  # URL
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

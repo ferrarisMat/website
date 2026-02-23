@@ -1,0 +1,24 @@
+{
+    "name": "ferrarismat/website-cms",
+    "description": "Craft CMS 5 headless backend — countries & DnB scene data via GraphQL",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.2.0",
+        "craftcms/cms": "^5.0.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "craftcms/plugin-installer": true,
+            "yiisoft/yii2-composer": true
+        },
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "8.2.0"
+        }
+    },
+    "scripts": {
+        "post-create-project-cmd": "@php craft setup/welcome"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

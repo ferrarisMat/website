@@ -1,0 +1,18 @@
+contentColumnType: 'decimal(10,6)'
+fieldGroup: fg000001-0000-4000-8000-000000000001
+handle: longitude
+instructions: 'Longitude in decimal degrees (e.g. -0.1278).'
+name: Longitude
+required: false
+searchable: false
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Number
+settings:
+  defaultValue: null
+  min: -180
+  max: 180
+  decimals: 6
+  prefix: ''
+  suffix: '°'
+  size: null

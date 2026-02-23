@@ -1,0 +1,10 @@
+# Craft
+/storage/
+/vendor/
+/web/cpresources/
+
+# Environment
+.env
+
+# OS
+.DS_Store

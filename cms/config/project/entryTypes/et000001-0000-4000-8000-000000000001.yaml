@@ -1,0 +1,30 @@
+handle: subGenre
+hasTitleField: false
+name: 'Sub Genre'
+section: null
+titleFormat: '{subGenreName}'
+titleTranslationKeyFormat: null
+titleTranslationMethod: none
+fieldLayouts:
+  fl000002-0000-4000-8000-000000000002:
+    tabs:
+      - uid: tb000002-0000-4000-8000-000000000002
+        name: Content
+        sortOrder: 1
+        elements:
+          - type: craft\fieldlayoutelements\CustomField
+            fieldUid: fd000005-0000-4000-8000-000000000005
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: false
+            width: 100
+          - type: craft\fieldlayoutelements\CustomField
+            fieldUid: fd000009-0000-4000-8000-000000000009
+            label: ''
+            instructions: ''
+            tip: ''
+            warning: ''
+            required: false
+            width: 100

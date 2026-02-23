@@ -1,0 +1,8 @@
+baseUrl: $PRIMARY_SITE_URL
+handle: default
+hasUrls: true
+language: en
+name: 'Drum and bass around the world'
+primary: true
+siteGroup: 669041e3-4e7b-4b86-938b-70fa1ea7b456 # Drum and bass around the world
+sortOrder: 1

@@ -1,0 +1,15 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  - et000003-0000-4000-8000-000000000003
+handle: countries
+name: Countries
+propagationMethod: all
+siteSettings:
+  cd9850c4-f40e-4ad3-ae7f-cb809b250ecc:
+    enabledByDefault: true
+    hasUrls: false
+    uriFormat: null
+    template: null
+sortOrder: 1
+type: channel

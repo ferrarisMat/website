@@ -1,0 +1,18 @@
+contentColumnType: integer
+fieldGroup: fg000001-0000-4000-8000-000000000001
+handle: distance
+instructions: 'Scroll distance used to position the country on the globe.'
+name: Distance
+required: false
+searchable: false
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Number
+settings:
+  defaultValue: null
+  min: 0
+  max: null
+  decimals: 0
+  prefix: ''
+  suffix: ''
+  size: null
