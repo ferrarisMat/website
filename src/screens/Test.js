@@ -403,6 +403,8 @@ function Globe({ scrollY, onScrollStateChange, updateFrequencyData, frequencyTex
   const cameraOffset = useRef({ x: 0, y: 0 });
   const targetCameraOffset = useRef({ x: 0, y: 0 });
   const scrollProgressRef = useRef(0);
+  const prevIndexRef = useRef(0);
+  const rotationBlendRef = useRef(0);
   const countriesDataRef = useRef({});
   const raycaster = useRef(new THREE.Raycaster());
   const mouse = useRef(new THREE.Vector2());
@@ -545,6 +547,8 @@ function Globe({ scrollY, onScrollStateChange, updateFrequencyData, frequencyTex
     const interpLon = prevLoc.lon + lonDiff * rotationBlend;
 
     scrollProgressRef.current = scrollState.scrollProgress;
+    prevIndexRef.current = prevIndex;
+    rotationBlendRef.current = rotationBlend;
 
     // Always set interpolated rotation target
     targetRotation.current = getGlobeRotation(interpLat, interpLon);
@@ -596,13 +600,27 @@ function Globe({ scrollY, onScrollStateChange, updateFrequencyData, frequencyTex
 
     // 1. Apply globe rotation, adjusted so the country faces the actual camera position
     if (globeRef.current) {
-      if (scrollProgressRef.current === 0) {
-        // Fully at Start: auto-rotate
-        const autoRotQ = new THREE.Quaternion().setFromAxisAngle(
-          new THREE.Vector3(0, 1, 0), delta * 0.1
+      const scrollProg = scrollProgressRef.current;
+      const prevIdx = prevIndexRef.current;
+      const rotBlend = rotationBlendRef.current;
+
+      // Auto-rotation weight: 1 at Start, fades out as we transition into the first country.
+      // This makes the globe start spinning immediately when scrolling back toward Start.
+      const autoWeight = prevIdx === 0 ? Math.max(0, 1 - rotBlend) : (scrollProg === 0 ? 1 : 0);
+
+      if (autoWeight > 0.001) {
+        // Scale the auto-rotation by autoWeight so it blends smoothly with the slerp below
+        const scaledAutoRotQ = new THREE.Quaternion().slerp(
+          new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), delta * 0.1),
+          autoWeight
         );
-        globeRef.current.quaternion.multiply(autoRotQ);
-      } else {
+        globeRef.current.quaternion.multiply(scaledAutoRotQ);
+      }
+
+      // Country-targeting slerp: active once scrolling, weighted by rotBlend when in the
+      // Start→Country1 segment so it fades in/out with auto-rotation seamlessly.
+      const targetWeight = prevIdx === 0 ? rotBlend : 1;
+      if (scrollProg > 0 && targetWeight > 0.001) {
         // Compute visible zone center and target rotation via quaternion
         const tanHalfFov = Math.tan(30 * Math.PI / 180);
         const aspect = state.viewport.aspect;
@@ -650,8 +668,8 @@ function Globe({ scrollY, onScrollStateChange, updateFrequencyData, frequencyTex
           // Final = inverse(Qt) * Qc → brings country to where target point was
           const Qf = Qt.clone().conjugate().multiply(Qc);
 
-          // Quaternion slerp for shortest-path rotation
-          globeRef.current.quaternion.slerp(Qf, Math.min(delta * 3, 1));
+          // Quaternion slerp for shortest-path rotation, scaled by targetWeight
+          globeRef.current.quaternion.slerp(Qf, Math.min(delta * 3, 1) * targetWeight);
         }
       }
 
@@ -792,7 +810,6 @@ function Test() {
 
   const {
     isPlaying,
-    currentTracks,
     togglePlayPause,
     updateScrollAudio,
     updateFrequencyData,
@@ -817,11 +834,6 @@ function Test() {
     updateScrollAudio(scrollState, locations);
   }, [updateScrollAudio]);
 
-  // Show the louder track in the UI
-  const displayTrack = active && currentTracks
-    ? (currentTracks.prev || currentTracks.next)
-    : null;
-
   return (
     <>
       {active && <div style={{ position: 'fixed', zIndex: 1, color: 'white' }}>
@@ -831,7 +843,6 @@ function Test() {
       <PlayPauseButton
         isConfigured={true}
         isPlaying={isPlaying}
-        currentTrack={displayTrack}
         onToggle={togglePlayPause}
       />
       <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, background: '#000' }}>
